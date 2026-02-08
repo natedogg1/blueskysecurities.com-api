@@ -34,3 +34,20 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`API running on port ${PORT}`);
 });
+
+
+
+app.get("/history/:symbol", async (req, res) => {
+  const symbol = req.params.symbol.toUpperCase();
+
+  const url = `https://cloud.iexapis.com/stable/stock/${symbol}/chart/5y?chartCloseOnly=true&token=${IEX_KEY}`;
+  const data = await fetch(url).then(r => r.json());
+
+  const cleaned = data.map(d => ({
+    date: d.date,
+    price: d.adjClose
+  }));
+
+  res.json(cleaned);
+});
+
